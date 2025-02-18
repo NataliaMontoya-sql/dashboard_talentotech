@@ -31,4 +31,16 @@ data = pd.DataFrame({
 
 # SideBar Setting & menu setting with .radio.
 st.sidebar.markdown("## Menú")
-menu = st.sidebar.checkbox("", ["Inicio", "Datos", "Visualización", "Configuración"])
+menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
+
+# Crear un menú con inicio, datos, visualización y configuración.
+
+st.sidebar.markdown("## Menú")
+menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
+
+if menu == "Inicio":
+    st.header("Inicio")
+
+if menu == "Datos":
+    st.subheader("Datos Generados 📎")
+    st.dataframe(data)
