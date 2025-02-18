@@ -37,3 +37,10 @@ menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuració
 if menu == "Datos":
     st.subheader("Datos Generados 📎")
     st.dataframe(data)
+
+elif menu == "Visualización":
+    st.header("Visualización")
+    st.subheader("Gráfico de líneas")
+    fig, ax = plt.subplots()
+    ax.plot(data['Fecha'], data['Ventas'], color='pink')
+
