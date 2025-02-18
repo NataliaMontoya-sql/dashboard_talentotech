@@ -14,3 +14,5 @@ st.set_page_config(
 
 st.title("Dashboard")
 st.sidebar.title("Sidebar")
+st.sidebar.markdown("## Menú")
+menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
