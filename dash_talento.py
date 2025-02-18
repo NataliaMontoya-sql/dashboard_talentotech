@@ -1,287 +1,148 @@
-# Importamos nuestras herramientas mágicas especiales
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
-import time
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Users, Calendar, MessageCircle, Moon } from 'lucide-react';
 
-# Configuramos nuestra página mágica para que sea grande y bonita
-st.set_page_config(
-    page_title="Dashboard Educativo Avanzado",
-    page_icon="🎓",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+const DashboardEducativo = () => {
+  const [progreso, setProgreso] = useState(784);
+  const [modo, setModo] = useState('claro');
+  const [datosGrafica] = useState([
+    { mes: 'Ene', valor: 30 },
+    { mes: 'Feb', valor: 45 },
+    { mes: 'Mar', valor: 35 },
+    { mes: 'Abr', valor: 50 },
+    { mes: 'May', valor: 40 }
+  ]);
 
-# Hacemos que todo se vea más bonito con colores suaves y especiales
-st.markdown("""
-    <style>
-    .main {
-        background-color: #E8F5E9;
-    }
-    .css-1d391kg {
-        background-color: #f5f5f5;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-    }
-    .stMetric {
-        background-color: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .sidebar .sidebar-content {
-        background-color: #4CAF50;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+  const [estudiantes] = useState([
+    { nombre: "Sarah Hudson", hora: "10:00", avatar: "/api/placeholder/30/30" },
+    { nombre: "Dakota Smith", hora: "11:15", avatar: "/api/placeholder/30/30" },
+    { nombre: "John Lane", hora: "12:30", avatar: "/api/placeholder/30/30" }
+  ]);
 
-# Creamos una barra lateral más sofisticada
-with st.sidebar:
-    st.title("🎯 Panel de Control")
-    
-    # Agregamos un selector de fecha
-    fecha_seleccionada = st.date_input(
-        "Selecciona una fecha",
-        datetime.now()
-    )
-    
-    # Agregamos un selector de modo
-    modo = st.select_slider(
-        "Modo de visualización",
-        options=["Básico", "Intermedio", "Avanzado"]
-    )
-    
-    # Creamos un filtro de actividades
-    actividades_disponibles = ["Todas", "Pintura", "Música", "Matemáticas", "Lectura", "Juegos"]
-    actividad_seleccionada = st.multiselect(
-        "Filtrar por actividad",
-        actividades_disponibles,
-        default="Todas"
-    )
-    
-    # Agregamos un medidor de progreso
-    progreso_total = st.progress(0)
-    for i in range(100):
-        time.sleep(0.01)
-        progreso_total.progress(i + 1)
+  const [eventos] = useState([
+    { tipo: "Reunión de equipo", participantes: 3 },
+    { tipo: "Clase de arte", participantes: 2 }
+  ]);
 
-# Creamos el contenido principal
-st.title("🌟 Dashboard Educativo Interactivo")
+  return (
+    <div className={`p-6 ${modo === 'oscuro' ? 'bg-gray-900 text-white' : 'bg-green-50'}`}>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Mi Tablero Mágico</h1>
+        <button 
+          onClick={() => setModo(modo === 'claro' ? 'oscuro' : 'claro')}
+          className="p-2 rounded-full hover:bg-gray-200"
+        >
+          <Moon className="w-6 h-6" />
+        </button>
+      </div>
 
-# Primera fila de métricas
-col1, col2, col3, col4 = st.columns(4)
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Tarjeta de Progreso */}
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg">Progreso del Día</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-center">
+              <div className="relative w-32 h-32">
+                <svg className="w-full h-full" viewBox="0 0 36 36">
+                  <path
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#eee"
+                    strokeWidth="3"
+                  />
+                  <path
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#4CAF50"
+                    strokeWidth="3"
+                    strokeDasharray={`${(progreso / 1000) * 100}, 100`}
+                  />
+                  <text x="18" y="20.35" className="text-3xl font-bold text-center">
+                    {progreso}
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-with col1:
-    st.metric(
-        label="✨ Puntos Totales",
-        value="784",
-        delta="54 nuevos",
-        delta_color="normal"
-    )
+        {/* Tarjeta de Gráfica */}
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg">Actividades del Mes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={datosGrafica}>
+                  <XAxis dataKey="mes" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="valor" 
+                    stroke="#4CAF50" 
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
 
-with col2:
-    st.metric(
-        label="👥 Nuevos Estudiantes",
-        value="54",
-        delta="+12%",
-        delta_color="normal"
-    )
-
-with col3:
-    st.metric(
-        label="📚 Actividades Completadas",
-        value="32",
-        delta="-2",
-        delta_color="inverse"
-    )
-
-with col4:
-    st.metric(
-        label="⭐ Índice de Participación",
-        value="86%",
-        delta="+5%"
-    )
-
-# Creamos una sección para la analítica avanzada
-st.subheader("📊 Análisis de Rendimiento")
-
-# Creamos dos columnas para gráficos
-graf_col1, graf_col2 = st.columns(2)
-
-with graf_col1:
-    # Datos para el gráfico de línea
-    datos_tendencia = pd.DataFrame({
-        'Fecha': pd.date_range(start='2024-01-01', periods=30),
-        'Actividad': np.random.randint(50, 100, 30),
-        'Participación': np.random.randint(70, 100, 30)
-    })
-    
-    fig_linea = px.line(
-        datos_tendencia,
-        x='Fecha',
-        y=['Actividad', 'Participación'],
-        title='Tendencias de Participación',
-        template='plotly_white'
-    )
-    fig_linea.update_traces(line_width=3)
-    st.plotly_chart(fig_linea, use_container_width=True)
-
-with graf_col2:
-    # Datos para el gráfico de radar
-    categorias = ['Creatividad', 'Colaboración', 'Concentración', 'Comunicación', 'Curiosidad']
-    valores = np.random.randint(70, 100, 5)
-    
-    fig_radar = go.Figure()
-    fig_radar.add_trace(go.Scatterpolar(
-        r=valores,
-        theta=categorias,
-        fill='toself',
-        name='Habilidades'
-    ))
-    fig_radar.update_layout(
-        polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[0, 100]
-            )
-        ),
-        title='Desarrollo de Habilidades'
-    )
-    st.plotly_chart(fig_radar, use_container_width=True)
-
-# Creamos una sección para los estudiantes del día
-st.subheader("👨‍🎨 Estudiantes Destacados del Día")
-
-# Datos de estudiantes más detallados
-estudiantes = pd.DataFrame({
-    'Nombre': ['Sarah Hudson', 'Dakota Smith', 'John Lane'],
-    'Hora': ['10:00 am', '11:15 am', '12:30 pm'],
-    'Actividad': ['Pintura Creativa', 'Música Avanzada', 'Matemáticas Divertidas'],
-    'Progreso': [95, 88, 92],
-    'Estado': ['En clase', 'Próximo', 'Pendiente']
-})
-
-# Mostramos los estudiantes en tarjetas interactivas
-for i, estudiante in estudiantes.iterrows():
-    col_est1, col_est2, col_est3 = st.columns([1, 2, 1])
-    
-    with col_est1:
-        st.image(f"https://api.dicebear.com/7.x/avataaars/svg?seed={i}", width=80)
-    
-    with col_est2:
-        st.markdown(f"### {estudiante['Nombre']}")
-        st.write(f"🕒 {estudiante['Hora']} | 📚 {estudiante['Actividad']}")
-        progress_bar = st.progress(estudiante['Progreso']/100)
-        
-    with col_est3:
-        if estudiante['Estado'] == 'En clase':
-            st.success(estudiante['Estado'])
-        elif estudiante['Estado'] == 'Próximo':
-            st.warning(estudiante['Estado'])
-        else:
-            st.info(estudiante['Estado'])
-    
-    st.divider()
-
-# Agregamos una sección de eventos
-st.subheader("📅 Próximos Eventos")
-
-# Creamos datos de eventos
-eventos = [
-    {"tipo": "Reunión de equipo", "fecha": "Hoy, 3:00 PM", "participantes": 3},
-    {"tipo": "Clase de arte", "fecha": "Mañana, 10:00 AM", "participantes": 2},
-    {"tipo": "Evaluación mensual", "fecha": "Viernes, 2:00 PM", "participantes": 4}
-]
-
-# Mostramos los eventos en una tabla interactiva
-tabla_eventos = pd.DataFrame(eventos)
-st.table(tabla_eventos.style.highlight_max(axis=0))
-
-# Agregamos un chat de soporte simulado
-with st.expander("💬 Chat de Soporte"):
-    st.write("Conversación de ejemplo:")
-    st.info("👩‍🏫 Profesora: ¡Hola! ¿En qué puedo ayudarte hoy?")
-    st.text_input("Escribe tu mensaje aquí...")
-
-# (Todo el código anterior se mantiene igual hasta la sección del chat)
-
-# Antes del chat, inicializamos el estado para guardar los mensajes
-if 'mensajes' not in st.session_state:
-    st.session_state.mensajes = [
-        {"rol": "asistente", "contenido": "¡Hola! ¿En qué puedo ayudarte hoy?", "hora": datetime.now().strftime("%H:%M")}
-    ]
-
-# Reemplazamos la sección del chat anterior con esta versión funcional
-st.subheader("💬 Chat de Soporte en Vivo")
-
-# Creamos un contenedor para los mensajes con estilo
-chat_container = st.container()
-
-# Mostramos los mensajes existentes
-with chat_container:
-    for mensaje in st.session_state.mensajes:
-        if mensaje["rol"] == "asistente":
-            col1, col2 = st.columns([1, 13])
-            with col1:
-                st.image("https://api.dicebear.com/7.x/avataaars/svg?seed=teacher", width=45)
-            with col2:
-                st.markdown(f"""
-                <div style='background-color: #E8F5E9; padding: 10px; border-radius: 10px; margin-bottom: 10px;'>
-                    <small style='color: gray;'>Profesora • {mensaje["hora"]}</small><br>
-                    {mensaje["contenido"]}
+        {/* Lista de Estudiantes */}
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg">Amiguitos de Hoy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {estudiantes.map((estudiante, index) => (
+                <div key={index} className="flex items-center space-x-4">
+                  <img 
+                    src={estudiante.avatar} 
+                    alt={estudiante.nombre}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <div>
+                    <p className="font-medium">{estudiante.nombre}</p>
+                    <p className="text-sm text-gray-500">{estudiante.hora}</p>
+                  </div>
                 </div>
-                """, unsafe_allow_html=True)
-        else:
-            col1, col2 = st.columns([13, 1])
-            with col1:
-                st.markdown(f"""
-                <div style='background-color: #F0F2F6; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: right;'>
-                    <small style='color: gray;'>Tú • {mensaje["hora"]}</small><br>
-                    {mensaje["contenido"]}
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lista de Eventos */}
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg">Eventos Divertidos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {eventos.map((evento, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <span>{evento.tipo}</span>
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-4 h-4" />
+                    <span>{evento.participantes}</span>
+                  </div>
                 </div>
-                """, unsafe_allow_html=True)
-            with col2:
-                st.image("https://api.dicebear.com/7.x/avataaars/svg?seed=student", width=45)
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
 
-# Agregamos el campo de entrada y el botón de enviar
-with st.container():
-    col1, col2 = st.columns([6, 1])
-    with col1:
-        mensaje_usuario = st.text_input("Escribe tu mensaje aquí...", key="mensaje_input")
-    with col2:
-        enviar = st.button("Enviar")
-
-# Procesamos el envío de mensajes
-if enviar and mensaje_usuario:
-    # Agregamos el mensaje del usuario
-    st.session_state.mensajes.append({
-        "rol": "usuario",
-        "contenido": mensaje_usuario,
-        "hora": datetime.now().strftime("%H:%M")
-    })
-    
-    # Simulamos una respuesta de la profesora
-    respuestas = [
-        "¡Excelente pregunta! ¿Te gustaría que lo exploremos juntos?",
-        "Vamos a ver cómo podemos ayudarte con eso.",
-        "¡Qué bueno que lo preguntas! Déjame explicarte...",
-        "¡Muy bien! Trabajemos en eso juntos.",
-        "¡Interesante! ¿Qué te parece si lo analizamos paso a paso?"
-    ]
-    
-    # Agregamos una pequeña pausa para simular que la profesora está escribiendo
-    time.sleep(1)
-    
-    # Agregamos la respuesta de la profesora
-    st.session_state.mensajes.append({
-        "rol": "asistente",
-        "contenido": np.random.choice(respuestas),
-        "hora": datetime.now().strftime("%H:%M")
-    })
-    
-    # Limpiamos el campo de entrada
-    st.experimental_rerun()
+export default DashboardEducativo;
