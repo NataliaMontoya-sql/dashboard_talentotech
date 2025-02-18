@@ -39,9 +39,20 @@ if menu == "Datos":
     st.dataframe(data)
 
 elif menu == "Visualización":
+    #Settle headers
     st.header("Visualización")
+    
+    # Gráfico de líneas para ventas
     st.subheader("Gráfico de líneas")
     fig, ax = plt.subplots()
     ax.plot(data['Fecha'], data['Ventas'], color='pink')
     st.pyplot(fig)
-
+    
+    #Gráfico de barras de precio y producto.
+    st.subheader("Gráfico de barras")
+    fig, ax = plt.subplots()
+    ax.bar(data['Producto'], data['Precio'])
+    st.pyplot(fig)
+    
+    #Filtrar ventas
+    
