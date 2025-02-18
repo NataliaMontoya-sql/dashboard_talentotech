@@ -38,9 +38,6 @@ menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuració
 st.sidebar.markdown("## Menú")
 menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
 
-if menu == "Inicio":
-    st.header("Inicio")
-
 if menu == "Datos":
     st.subheader("Datos Generados 📎")
     st.dataframe(data)
