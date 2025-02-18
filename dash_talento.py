@@ -33,11 +33,7 @@ data = pd.DataFrame({
 st.sidebar.markdown("## Menú")
 menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
 
-# Crear un menú con inicio, datos, visualización y configuración.
-
-st.sidebar.markdown("## Menú")
-menu = st.sidebar.radio("", ["Inicio", "Datos", "Visualización", "Configuración"])
-
+# Imprimir datos generados
 if menu == "Datos":
     st.subheader("Datos Generados 📎")
     st.dataframe(data)
