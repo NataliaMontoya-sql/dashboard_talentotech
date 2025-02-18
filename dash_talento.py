@@ -206,3 +206,82 @@ with st.expander("💬 Chat de Soporte"):
     st.write("Conversación de ejemplo:")
     st.info("👩‍🏫 Profesora: ¡Hola! ¿En qué puedo ayudarte hoy?")
     st.text_input("Escribe tu mensaje aquí...")
+
+# (Todo el código anterior se mantiene igual hasta la sección del chat)
+
+# Antes del chat, inicializamos el estado para guardar los mensajes
+if 'mensajes' not in st.session_state:
+    st.session_state.mensajes = [
+        {"rol": "asistente", "contenido": "¡Hola! ¿En qué puedo ayudarte hoy?", "hora": datetime.now().strftime("%H:%M")}
+    ]
+
+# Reemplazamos la sección del chat anterior con esta versión funcional
+st.subheader("💬 Chat de Soporte en Vivo")
+
+# Creamos un contenedor para los mensajes con estilo
+chat_container = st.container()
+
+# Mostramos los mensajes existentes
+with chat_container:
+    for mensaje in st.session_state.mensajes:
+        if mensaje["rol"] == "asistente":
+            col1, col2 = st.columns([1, 13])
+            with col1:
+                st.image("https://api.dicebear.com/7.x/avataaars/svg?seed=teacher", width=45)
+            with col2:
+                st.markdown(f"""
+                <div style='background-color: #E8F5E9; padding: 10px; border-radius: 10px; margin-bottom: 10px;'>
+                    <small style='color: gray;'>Profesora • {mensaje["hora"]}</small><br>
+                    {mensaje["contenido"]}
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            col1, col2 = st.columns([13, 1])
+            with col1:
+                st.markdown(f"""
+                <div style='background-color: #F0F2F6; padding: 10px; border-radius: 10px; margin-bottom: 10px; text-align: right;'>
+                    <small style='color: gray;'>Tú • {mensaje["hora"]}</small><br>
+                    {mensaje["contenido"]}
+                </div>
+                """, unsafe_allow_html=True)
+            with col2:
+                st.image("https://api.dicebear.com/7.x/avataaars/svg?seed=student", width=45)
+
+# Agregamos el campo de entrada y el botón de enviar
+with st.container():
+    col1, col2 = st.columns([6, 1])
+    with col1:
+        mensaje_usuario = st.text_input("Escribe tu mensaje aquí...", key="mensaje_input")
+    with col2:
+        enviar = st.button("Enviar")
+
+# Procesamos el envío de mensajes
+if enviar and mensaje_usuario:
+    # Agregamos el mensaje del usuario
+    st.session_state.mensajes.append({
+        "rol": "usuario",
+        "contenido": mensaje_usuario,
+        "hora": datetime.now().strftime("%H:%M")
+    })
+    
+    # Simulamos una respuesta de la profesora
+    respuestas = [
+        "¡Excelente pregunta! ¿Te gustaría que lo exploremos juntos?",
+        "Vamos a ver cómo podemos ayudarte con eso.",
+        "¡Qué bueno que lo preguntas! Déjame explicarte...",
+        "¡Muy bien! Trabajemos en eso juntos.",
+        "¡Interesante! ¿Qué te parece si lo analizamos paso a paso?"
+    ]
+    
+    # Agregamos una pequeña pausa para simular que la profesora está escribiendo
+    time.sleep(1)
+    
+    # Agregamos la respuesta de la profesora
+    st.session_state.mensajes.append({
+        "rol": "asistente",
+        "contenido": np.random.choice(respuestas),
+        "hora": datetime.now().strftime("%H:%M")
+    })
+    
+    # Limpiamos el campo de entrada
+    st.experimental_rerun()
