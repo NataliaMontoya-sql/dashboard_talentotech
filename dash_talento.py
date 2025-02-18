@@ -11,7 +11,7 @@ import time
 st.set_page_config(
     page_title="Dashboard Educativo Avanzado",
     page_icon="🎓",
-    layout="ultrawide",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
